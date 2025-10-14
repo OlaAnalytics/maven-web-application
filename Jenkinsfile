@@ -68,14 +68,14 @@ post
 {
   success
   {
-    emailext to: 'devopstrainingblr@gmail.com,mithuntechnologies@yahoo.com',
+    emailext to: 'olawaleaboderin13@gmail.com',
     subject: "Pipeline Build is Over Build # is ${env.BUILD_NUMBER} and Build Status is ${currentBuild.result}",
     body: "Pipeline Build is Over Build # is ${env.BUILD_NUMBER} and Build Status is ${currentBuild.result}",
     replyTo: 'devopstrainingblr@gmail.com'
   }
   failure
   {
-    emailext to: 'devopstrainingblr@gmail.com,mithuntechnologies@yahoo.com',
+    emailext to: 'olawaleaboderin13@gmail.com',
     subject: "Pipeline Build is Over Build # is ${env.BUILD_NUMBER} and Build Status is ${currentBuild.result}",
     body: "Pipeline Build is Over Build # is ${env.BUILD_NUMBER} and Build Status is ${currentBuild.result}",
     replyTo: 'devopstrainingblr@gmail.com'
