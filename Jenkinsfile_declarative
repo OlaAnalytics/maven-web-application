@@ -45,7 +45,7 @@ agent { label 'node' }
             steps {
                 sh "mvn deploy"
             }
-        } */
+        } 
 
         // Deploy to Tomcat Server
         stage('DeployAppIntoTomcatServer') {
@@ -54,7 +54,7 @@ agent { label 'node' }
                     sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.50.240.56:/opt/apache-tomcat-9.0.97/webapps/"
                 }
             }
-        }
+        } */
     }
 
     post {
