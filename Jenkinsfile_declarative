@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    tools {
+        maven "maven3.8.6"
+    }
+
+    stages {
+
+        // Getting the code from GitHub Repo
+        stage('CheckoutCode') {
+            steps {
+                script {
+                    sendNotifications('STARTED')
+                }
+                git branch: 'development', url: 'https://github.com/OlaAnalytics/maven-web-application.git'
+            }
+        }
+
+        // Build using Maven
+        stage('Build') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        // Executing SonarQube Report
+        stage('SonarQubeReport') {
+            steps {
+                sh "mvn sonar:sonar"
+            }
+        }
+		
+	    //Uploading artifcats into Nexus repo
+	    stage('UploadArtifactinotNexus'){
+	    steps{
+	     sh "mvn deploy"
+	    }
+	    }
+
+        // Deploy to Tomcat Server
+        stage('DeployAppIntoTomcatServer') {
+            steps {
+                sshagent(['2530d036-4232-4bd1-a5ff-8f1b805f16c4']) {
+                    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.50.240.56:/opt/apache-tomcat-9.0.97/webapps/"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                sendNotifications('SUCCESS')
+            }
+        }
+        failure {
+            script {
+                sendNotifications('FAILED')
+            }
+        }
+    }
+}
+
+// ------------------- Function Section -------------------
+
+def sendNotifications(String buildStatus = 'STARTED') {
+    // build status of null means successful
+    buildStatus = buildStatus ?: 'SUCCESS'
+
+    // Default values
+    def colorCode = '#FF0000'
+    def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+    def summary = "${subject}\nJob Name: '${env.JOB_NAME}'\nBuild Number: [${currentBuild.displayName}]\nBuild URL: (${env.BUILD_URL})"
+
+    // Override default values based on build status
+    if (buildStatus == 'STARTED') {
+        colorCode = '#FFFF00'
+    } else if (buildStatus == 'SUCCESS') {
+        colorCode = '#00FF00'
+    } else {
+        colorCode = '#FF0000'
+    }
+
+    // Send notifications
+    slackSend(color: colorCode, message: summary)
+}
