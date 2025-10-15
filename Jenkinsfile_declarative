@@ -40,11 +40,11 @@ pipeline {
         }
 
         // Uploading artifacts into Nexus repo
-        stage('UploadArtifactIntoNexus') {
+       /* stage('UploadArtifactIntoNexus') {
             steps {
                 sh "mvn deploy"
             }
-        }
+        } */
 
         // Deploy to Tomcat Server
         stage('DeployAppIntoTomcatServer') {
