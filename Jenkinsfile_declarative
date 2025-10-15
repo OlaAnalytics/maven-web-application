@@ -5,6 +5,15 @@ pipeline {
         maven "maven3.8.6"
     }
 
+// triggers {
+  pollSCM '* * * * *'
+}
+
+options {
+  timestamps
+}
+
+
     stages {
 
         // Getting the code from GitHub Repo
